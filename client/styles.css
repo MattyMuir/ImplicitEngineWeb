@@ -14,11 +14,11 @@
 
 .bodyHeight
 {
-	height: calc(100vh - 40px);
+	height: calc(100vh - 50px);
 }
 
 #mainCanvas
 {
 	width: calc(100vw * 10/12);
-	height: calc(100vh - 40px);
+	height: calc(100vh - 50px);
 }
