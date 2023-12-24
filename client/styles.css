@@ -6,3 +6,19 @@
 	vertical-align: -.125em;
 	fill: white;
 }
+
+.navHeight
+{
+	height: 40px;
+}
+
+.bodyHeight
+{
+	height: calc(100vh - 40px);
+}
+
+#mainCanvas
+{
+	width: calc(100vw * 10/12);
+	height: calc(100vh - 40px);
+}
