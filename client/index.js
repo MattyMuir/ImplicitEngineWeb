@@ -2,24 +2,22 @@
 
 // === Globals ===
 var ctx = document.getElementById("mainCanvas").getContext("2d")
-var w = 0
-var h = 0
+var bounds = { w: 0, h: 0, xMin: -10, yMin: -10, xMax: 10, yMax: 10 }
 
 // === Event Handlers ===
 function UpdateDimensions()
 {
     var canvasDiv = document.getElementById("canvasDiv")
-    w = canvasDiv.getBoundingClientRect().width
-    h = canvasDiv.getBoundingClientRect().height
+    bounds.w = canvasDiv.getBoundingClientRect().width
+    bounds.h = canvasDiv.getBoundingClientRect().height
 
-    ctx.canvas.width = w
-    ctx.canvas.height = h
+    ctx.canvas.width = bounds.w
+    ctx.canvas.height = bounds.h
 }
 
 function Refresh()
 {
     UpdateDimensions()
-    console.log(`w: ${w} h: ${h}`)
     OnDraw()
 }
 
@@ -32,10 +30,12 @@ window.onresize = OnResize;
 // === Other Functions ===
 function OnDraw()
 {
-    ctx.moveTo(0, 0)
-    ctx.lineTo(w, h)
-    ctx.moveTo(0, h)
-    ctx.lineTo(w, 0)
+    var eqnList = document.getElementById("eqnList")
+    for (var child of eqnList.children)
+    {
+        var textInput = child.children[0]
+        RenderEquation(ctx, textInput.value, bounds)
+    }
     ctx.stroke()
 }
 
