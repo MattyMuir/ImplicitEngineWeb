@@ -1,3 +1,12 @@
+class Point
+{
+    constructor(x_, y_)
+    {
+        this.x = x_;
+        this.y = y_;
+    }
+}
+
 function EquationToExpression(eqnStr)
 {
     if (eqnStr.length == 0) return ""
@@ -17,17 +26,23 @@ function IsPositive(x)
     return (x >= 0) ? 1 : 0
 }
 
-function DrawLine(ctx, bounds, x0, y0, x1, y1)
+function ToScreen(p, bounds)
 {
     var worldW = bounds.xMax - bounds.xMin
     var worldH = bounds.yMax - bounds.yMin
-    var x0Screen = (x0 - bounds.xMin) / worldW * bounds.w
-    var y0Screen = (1 - (y0 - bounds.yMin) / worldH) * bounds.h
-    var x1Screen = (x1 - bounds.xMin) / worldW * bounds.w
-    var y1Screen = (1 - (y1 - bounds.yMin) / worldH) * bounds.h
+    var xScreen = (p.x - bounds.xMin) / worldW * bounds.w
+    var yScreen = (1 - (p.y - bounds.yMin) / worldH) * bounds.h
 
-    ctx.moveTo(x0Screen, y0Screen)
-    ctx.lineTo(x1Screen, y1Screen)
+    return new Point(xScreen, yScreen)
+}
+
+function DrawLine(p0, p1, ctx, bounds)
+{
+    var p0Screen = ToScreen(p0, bounds)
+    var p1Screen = ToScreen(p1, bounds)
+
+    ctx.moveTo(p0Screen.x, p0Screen.y)
+    ctx.lineTo(p1Screen.x, p1Screen.y)
 }
 
 function RenderEquation(ctx, eqnStr, bounds)
@@ -36,8 +51,8 @@ function RenderEquation(ctx, eqnStr, bounds)
     var eqn = math.compile(EquationToExpression(eqnStr))
 
     // Grid dimensions
-    const gridW = 1000
-    const gridH = 1000
+    const gridW = 100
+    const gridH = 100
 
     // Marching squares lookup table
     const LUT = [
@@ -92,16 +107,19 @@ function RenderEquation(ctx, eqnStr, bounds)
             
             // Get edge indices using LUT
             edgeIndices = LUT[lutIdx]
-            var edgeXs = [x + dx / 2, x + dx, x + dx / 2, x]
-            var edgeYs = [y, y + dy / 2, y + dy, y + dy / 2]
+
+            var edges = [
+                new Point(x + dx / 2, y),
+                new Point(x + dx, y + dy / 2),
+                new Point(x + dx / 2, y + dy),
+                new Point(x, y + dy / 2)
+            ]
 
             for (var i = 0; i < edgeIndices.length; i += 2)
             {
-                var edgeX0 = edgeXs[edgeIndices[i]]
-                var edgeY0 = edgeYs[edgeIndices[i]]
-                var edgeX1 = edgeXs[edgeIndices[i + 1]]
-                var edgeY1 = edgeYs[edgeIndices[i + 1]]
-                DrawLine(ctx, bounds, edgeX0, edgeY0, edgeX1, edgeY1)
+                var p0 = edges[edgeIndices[i]]
+                var p1 = edges[edgeIndices[i + 1]]
+                DrawLine(p0, p1, ctx, bounds)
             }
         }
     }
