@@ -15,6 +15,11 @@ function UpdateDimensions()
     ctx.canvas.height = bounds.h
 }
 
+function OnTextChanged(event)
+{
+    Refresh()
+}
+
 function Refresh()
 {
     UpdateDimensions()
@@ -34,10 +39,30 @@ function OnDraw()
     for (var child of eqnList.children)
     {
         var textInput = child.children[0]
-        RenderEquation(ctx, textInput.value, bounds)
+        try
+        {
+            RenderEquation(ctx, textInput.value, bounds)
+            textInput.classList.remove("text-danger")
+        }
+        catch(error)
+        {
+            console.log("Invalid Equation")
+            textInput.classList.add("text-danger")
+        }
     }
     ctx.stroke()
 }
 
+function AddTextListeners()
+{
+    var eqnList = document.getElementById("eqnList")
+    for (var child of eqnList.children)
+    {
+        var textInput = child.children[0]
+        textInput.addEventListener("input", OnTextChanged);
+    }
+}
+
 // === Main ===
+AddTextListeners()
 Refresh()

@@ -22,3 +22,8 @@
 	width: calc(100vw * 10/12);
 	height: calc(100vh - 50px);
 }
+
+.red
+{
+	background-color: red;
+}

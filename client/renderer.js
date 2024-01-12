@@ -7,12 +7,33 @@ class Point
     }
 }
 
+class Line
+{
+    constructor(p0_, p1_)
+    {
+        this.p0 = p0_;
+        this.p1 = p1_;
+    }
+}
+
+class InvalidEquation extends Error
+{
+    constructor()
+    {
+        super()
+    }
+}
+
 function EquationToExpression(eqnStr)
 {
     if (eqnStr.length == 0) return ""
-    var sides = eqnStr.split("=")
-    var lhs = sides[0]
-    var rhs = sides[1]
+    let sides = eqnStr.split("=")
+
+    // Equation validation
+    if (sides.length != 2) throw new InvalidEquation()
+
+    let lhs = sides[0]
+    let rhs = sides[1]
     return `${lhs} - (${rhs})`
 }
 
@@ -28,99 +49,157 @@ function IsPositive(x)
 
 function ToScreen(p, bounds)
 {
-    var worldW = bounds.xMax - bounds.xMin
-    var worldH = bounds.yMax - bounds.yMin
-    var xScreen = (p.x - bounds.xMin) / worldW * bounds.w
-    var yScreen = (1 - (p.y - bounds.yMin) / worldH) * bounds.h
+    let worldW = bounds.xMax - bounds.xMin
+    let worldH = bounds.yMax - bounds.yMin
+    let xScreen = (p.x - bounds.xMin) / worldW * bounds.w
+    let yScreen = (1 - (p.y - bounds.yMin) / worldH) * bounds.h
 
     return new Point(xScreen, yScreen)
 }
 
 function DrawLine(p0, p1, ctx, bounds)
 {
-    var p0Screen = ToScreen(p0, bounds)
-    var p1Screen = ToScreen(p1, bounds)
+    let p0Screen = ToScreen(p0, bounds)
+    let p1Screen = ToScreen(p1, bounds)
 
     ctx.moveTo(p0Screen.x, p0Screen.y)
     ctx.lineTo(p1Screen.x, p1Screen.y)
 }
 
+function GetCaseIndex(fs)
+{
+    let lutIdx = 0
+    let pow2 = 1
+    for (let i = 0; i < 4; i++)
+    {
+        lutIdx += IsPositive(fs[i]) * pow2
+        pow2 *= 2
+    }
+    return lutIdx
+}
+
+function Interpolate(edgeIdx, xs, ys, fs)
+{
+    let point = new Point(0, 0)
+    if (edgeIdx % 2 == 0) // Horizontal edge
+    {
+        // Point's y coordinate is trivial
+        point.y = ys[edgeIdx]
+
+        // Interpolate for x coordinate
+        let x1 = xs[edgeIdx]
+        let x2 = xs[edgeIdx + 1]
+        let v1 = fs[edgeIdx]
+        let v2 = fs[edgeIdx + 1]
+
+        point.x = (x1 * v2 - v1 * x2) / (v2 - v1)
+    }
+    else // Vertical edge
+    {
+        // Point's x coordinate is trivial
+        point.x = xs[edgeIdx]
+
+        // Interpolate for y coordinate
+        let y1 = ys[edgeIdx]
+        let y2 = ys[(edgeIdx + 1) % 4]
+        let v1 = fs[edgeIdx]
+        let v2 = fs[(edgeIdx + 1) % 4]
+
+        point.y = (y1 * v2 - v1 * y2) / (v2 - v1)
+    }
+
+    return point
+}
+
+// Marching squares lookup table
+const LUT = [
+    [],
+    [0, 3],
+    [0, 1],
+    [1, 3],
+    [1, 2],
+    [0, 3, 1, 2],
+    [0, 2],
+    [2, 3],
+    [2, 3],
+    [0, 2],
+    [0, 1, 2, 3],
+    [1, 2],
+    [1, 3],
+    [0, 1],
+    [0, 3],
+    []
+]
+
+function GetTileLines(xs, ys, fs)
+{
+    // Get edge indices using LUT
+    lutIdx = GetCaseIndex(fs)
+    edgeIndices = LUT[lutIdx]
+    let lineNum = edgeIndices.length / 2
+
+    // Prepare return value
+    let lines = []
+
+    for (let lineIdx = 0; lineIdx < lineNum; lineIdx++)
+    {
+        let firstEdge = edgeIndices[lineIdx * 2]
+        let secondEdge = edgeIndices[lineIdx * 2 + 1]
+
+        let firstPoint = Interpolate(firstEdge, xs, ys, fs)
+        let secondPoint = Interpolate(secondEdge, xs, ys, fs)
+
+        lines.push(new Line(firstPoint, secondPoint))
+    }
+
+    return lines
+}
+
 function RenderEquation(ctx, eqnStr, bounds)
 {
     // Pre-process and compile equation
-    var eqn = math.compile(EquationToExpression(eqnStr))
+    try
+    {
+        var eqn = math.compile(EquationToExpression(eqnStr))
+    }
+    catch (error)
+    {
+        throw new InvalidEquation()
+    }
 
     // Grid dimensions
-    const gridW = 100
-    const gridH = 100
-
-    // Marching squares lookup table
-    const LUT = [
-        [],
-        [0, 3],
-        [0, 1],
-        [1, 3],
-        [1, 2],
-        [0, 3, 1, 2],
-        [0, 2],
-        [2, 3],
-        [2, 3],
-        [0, 2],
-        [0, 1, 2, 3],
-        [1, 2],
-        [1, 3],
-        [0, 1],
-        [0, 3],
-        []
-    ]
+    const gridW = 200
+    const gridH = 200
 
     // Pre-compute useful values
-    var worldW = bounds.xMax - bounds.xMin
-    var worldH = bounds.yMax - bounds.yMin
-    var dx = worldW / gridW
-    var dy = worldH / gridH
+    let worldW = bounds.xMax - bounds.xMin
+    let worldH = bounds.yMax - bounds.yMin
+    let dx = worldW / gridW
+    let dy = worldH / gridH
 
     // Loop over entire grid
     for (let yi = 0; yi < gridH; yi++)
     {
         for (let xi = 0; xi < gridW; xi++)
         {
-            var x = bounds.xMin + xi * dx
-            var y = bounds.yMin + yi * dy
+            // Calculate coordinates of current square
+            let x = bounds.xMin + xi * dx
+            let y = bounds.yMin + yi * dy
+            let xs = [x, x + dx, x + dx, x]
+            let ys = [y, y, y + dy, y + dy]
 
             // Evaluate function over grid square
             // bottom-left, bottom-right, top-right, top-left
-            var fs = [0, 0, 0, 0]
-            fs[0] = Eval(eqn, x, y)
-            fs[1] = Eval(eqn, x + dx, y)
-            fs[2] = Eval(eqn, x + dx, y + dy)
-            fs[3] = Eval(eqn, x, y + dy)
+            let fs = [0, 0, 0, 0]
+            for (let corner = 0; corner < 4; corner++)
+                fs[corner] = Eval(eqn, xs[corner], ys[corner])
 
-            // Get lookup table index
-            var lutIdx = 0
-            var pow2 = 1
-            for (let i = 0; i < 4; i++)
-            {
-                lutIdx += IsPositive(fs[i]) * pow2
-                pow2 *= 2
-            }
-            
-            // Get edge indices using LUT
-            edgeIndices = LUT[lutIdx]
+            // Compute the lines for this grid square
+            lines = GetTileLines(xs, ys, fs)
 
-            var edges = [
-                new Point(x + dx / 2, y),
-                new Point(x + dx, y + dy / 2),
-                new Point(x + dx / 2, y + dy),
-                new Point(x, y + dy / 2)
-            ]
-
-            for (var i = 0; i < edgeIndices.length; i += 2)
-            {
-                var p0 = edges[edgeIndices[i]]
-                var p1 = edges[edgeIndices[i + 1]]
-                DrawLine(p0, p1, ctx, bounds)
-            }
+            // Convert lines to screen coordinates and draw
+            for (let i = 0; i < lines.length; i++)
+                DrawLine(lines[i].p0, lines[i].p1, ctx, bounds)
         }
     }
 }
