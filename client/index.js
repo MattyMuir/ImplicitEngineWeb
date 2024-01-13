@@ -10,6 +10,8 @@ function UpdateDimensions()
     let canvasDiv = document.getElementById("canvasDiv")
     bounds.w = canvasDiv.getBoundingClientRect().width
     bounds.h = canvasDiv.getBoundingClientRect().height
+    bounds.yMax = 10 * bounds.h / bounds.w
+    bounds.yMin = -10 * bounds.h / bounds.w
 
     ctx.canvas.width = bounds.w
     ctx.canvas.height = bounds.h
