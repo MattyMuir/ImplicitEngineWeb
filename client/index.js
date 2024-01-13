@@ -1,13 +1,13 @@
 "use strict"
 
 // === Globals ===
-var ctx = document.getElementById("mainCanvas").getContext("2d")
-var bounds = { w: 0, h: 0, xMin: -10, yMin: -10, xMax: 10, yMax: 10 }
+let ctx = document.getElementById("mainCanvas").getContext("2d")
+let bounds = { w: 0, h: 0, xMin: -10, yMin: -10, xMax: 10, yMax: 10 }
 
 // === Event Handlers ===
 function UpdateDimensions()
 {
-    var canvasDiv = document.getElementById("canvasDiv")
+    let canvasDiv = document.getElementById("canvasDiv")
     bounds.w = canvasDiv.getBoundingClientRect().width
     bounds.h = canvasDiv.getBoundingClientRect().height
 
@@ -26,6 +26,25 @@ function Refresh()
     OnDraw()
 }
 
+function PlusButtonPressed(event)
+{
+    let eqnList = document.getElementById("eqnList")
+
+    // Create new list item
+    let newInput = document.createElement("li")
+    newInput.classList.add("list-group-item")
+    newInput.classList.add("p-1")
+    newInput.innerHTML = "<input type=\"text\" class=\"form-control\">"
+
+    // Add new item to eqnList
+    eqnList.appendChild(newInput)
+
+    // Add event listener
+    newInput.children[0].addEventListener("input", OnTextChanged)
+
+    console.log("Pressed")
+}
+
 function OnResize(event)
 {
     Refresh()
@@ -35,10 +54,10 @@ window.onresize = OnResize;
 // === Other Functions ===
 function OnDraw()
 {
-    var eqnList = document.getElementById("eqnList")
-    for (var child of eqnList.children)
+    let eqnList = document.getElementById("eqnList")
+    for (let child of eqnList.children)
     {
-        var textInput = child.children[0]
+        let textInput = child.children[0]
         try
         {
             RenderEquation(ctx, textInput.value, bounds)
@@ -46,7 +65,6 @@ function OnDraw()
         }
         catch(error)
         {
-            console.log("Invalid Equation")
             textInput.classList.add("text-danger")
         }
     }
@@ -55,14 +73,21 @@ function OnDraw()
 
 function AddTextListeners()
 {
-    var eqnList = document.getElementById("eqnList")
-    for (var child of eqnList.children)
+    let eqnList = document.getElementById("eqnList")
+    for (let child of eqnList.children)
     {
-        var textInput = child.children[0]
-        textInput.addEventListener("input", OnTextChanged);
+        let textInput = child.children[0]
+        textInput.addEventListener("input", OnTextChanged)
     }
+}
+
+function PlusButtonListener()
+{
+    let plusBtn = document.getElementById("plusBtn")
+    plusBtn.onclick = PlusButtonPressed
 }
 
 // === Main ===
 AddTextListeners()
+PlusButtonListener()
 Refresh()

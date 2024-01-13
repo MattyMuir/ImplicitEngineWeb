@@ -160,7 +160,9 @@ function RenderEquation(ctx, eqnStr, bounds)
     // Pre-process and compile equation
     try
     {
-        var eqn = math.compile(EquationToExpression(eqnStr))
+        let expression = EquationToExpression(eqnStr)
+        if (expression == "") return
+        var eqn = math.compile(expression)
     }
     catch (error)
     {

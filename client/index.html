@@ -23,13 +23,21 @@
 		</symbol>
 	</svg>
 
+	<!-- Plus icon image -->
+	<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+		<symbol id="plus" viewBox="0 0 16 16">
+			<path fill-rule="evenodd"
+				d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+		</symbol>
+	</svg>
+
 	<!-- Navbar -->
 	<header class="navbar sticky-top bg-dark navHeight flex-md-nowrap p-0 shadow">
 		<ul class="navbar-nav flex-row">
 			<li class="nav-item text-nowrap">
 				<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
 					aria-controls="offcanvasExample">
-					<svg class="iconBtn">
+					<svg class="iconBtn whiteFill">
 						<use xlink:href="#list" />
 					</svg>
 				</button>
@@ -66,32 +74,19 @@
 	<div class="container-fluid">
 		<div class="row bodyHeight">
 			<!-- Equation List -->
-			<div class="col-2 p-0 border bodyHeight">
+			<div class="col-2 p-0 border bodyHeight text-center">
 				<ul class="list-group" id="eqnList">
 					<li class="list-group-item p-1">
 						<input type="text" class="form-control">
 					</li>
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					<!--
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-					-->
 				</ul>
+
+				<!-- Plus Button -->
+				<button class="btn bg-light" id="plusBtn">
+					<svg class="iconBtn">
+						<use xlink:href="#plus"/>
+					</svg>
+				</button>
 			</div>
 
 			<!-- Canvas -->
