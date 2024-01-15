@@ -43,8 +43,6 @@ function PlusButtonPressed(event)
 
     // Add event listener
     newInput.children[0].addEventListener("input", OnTextChanged)
-
-    console.log("Pressed")
 }
 
 function OnResize(event)
