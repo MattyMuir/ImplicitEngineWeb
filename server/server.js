@@ -5,6 +5,9 @@ const app = express()
 // Add all static files in the root directory
 app.use(express.static("client"))
 
+// Interpret request bodies as JSON
+app.use(express.json())
+
 // === Data Structure ===
 class User
 {
@@ -38,7 +41,7 @@ nextGraphId++
 // === GET Methods ===
 
 // List graph GET method
-app.get("/allgraphs", (request, response) => {
+app.get("/listGraphs", (request, response) => {
 	// Prepare return object
 	let result = []
 
@@ -65,11 +68,15 @@ app.get("/graph", (request, response) => {
 	response.sendStatus(404)
 })
 
-/*
-app.post("/newgraph", (request, response) => {
+app.post("/newGraph", (request, response) => {
+	console.log(request.body)
+	let graphInfo = request.body
 
+	let newGraph = new Graph(nextGraphId++, graphInfo.name, graphInfo.username, JSON.parse(graphInfo.eqnStrings))
+	graphs.push(newGraph)
+
+	response.send()
 })
-*/
 
 // === POST Methods ===
 

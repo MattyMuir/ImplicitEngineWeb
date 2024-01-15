@@ -45,6 +45,25 @@ function PlusButtonPressed(event)
     newInput.children[0].addEventListener("input", OnTextChanged)
 }
 
+async function SaveButtonPressed(event)
+{
+    let newGraph = {}
+    newGraph.name = "GraphYuh"
+    newGraph.username = "Matty"
+    newGraph.eqnStrings = JSON.stringify(["x=0"])
+
+    console.log(JSON.stringify(newGraph))
+
+    const response = await fetch("/newGraph", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newGraph),
+    });
+}
+
 function OnResize(event)
 {
     Refresh()
@@ -63,7 +82,7 @@ function OnDraw()
             RenderEquation(ctx, textInput.value, bounds)
             textInput.classList.remove("text-danger")
         }
-        catch(error)
+        catch (error)
         {
             textInput.classList.add("text-danger")
         }
@@ -81,13 +100,18 @@ function AddTextListeners()
     }
 }
 
-function PlusButtonListener()
+function AddButtonListeners()
 {
+    // Plus button
     let plusBtn = document.getElementById("plusBtn")
     plusBtn.onclick = PlusButtonPressed
+
+    // Save button
+    let saveBtn = document.getElementById("saveBtn")
+    saveBtn.onclick = SaveButtonPressed
 }
 
 // === Main ===
 AddTextListeners()
-PlusButtonListener()
+AddButtonListeners()
 Refresh()
