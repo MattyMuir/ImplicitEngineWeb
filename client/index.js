@@ -65,6 +65,20 @@ async function SaveButtonPressed(event)
     });
 }
 
+function RenameModalOpened()
+{
+    let renameInput = document.getElementById("renameInput")
+    renameInput.value = graphName
+}
+
+function OnEquationRenamed()
+{
+    let renameInput = document.getElementById("renameInput")
+    let graphNameDisplay = document.getElementById("graphNameDisplay")
+    graphName = renameInput.value
+    graphNameDisplay.innerHTML = graphName
+}
+
 function OnResize(event)
 {
     Refresh()
