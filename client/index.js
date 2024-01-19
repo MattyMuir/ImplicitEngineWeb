@@ -3,6 +3,7 @@
 // === Globals ===
 let ctx = document.getElementById("mainCanvas").getContext("2d")
 let bounds = { w: 0, h: 0, xMin: -10, yMin: -10, xMax: 10, yMax: 10 }
+let graphName = "Unnamed Graph"
 
 // === Event Handlers ===
 function UpdateDimensions()
@@ -47,13 +48,13 @@ function PlusButtonPressed(event)
 
 async function SaveButtonPressed(event)
 {
+    // Prepare data for request
     let newGraph = {}
     newGraph.name = "GraphYuh"
     newGraph.username = "Matty"
     newGraph.eqnStrings = JSON.stringify(["x=0"])
 
-    console.log(JSON.stringify(newGraph))
-
+    // Send POST request
     const response = await fetch("/newGraph", {
         method: "POST",
         mode: "cors",

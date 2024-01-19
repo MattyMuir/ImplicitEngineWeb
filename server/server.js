@@ -68,6 +68,7 @@ app.get("/graph", (request, response) => {
 	response.sendStatus(404)
 })
 
+// === POST Methods ===
 app.post("/newGraph", (request, response) => {
 	console.log(request.body)
 	let graphInfo = request.body
@@ -77,8 +78,6 @@ app.post("/newGraph", (request, response) => {
 
 	response.send()
 })
-
-// === POST Methods ===
 
 // Start server
 app.listen(8080)
