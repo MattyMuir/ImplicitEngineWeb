@@ -69,6 +69,8 @@ app.get("/graph", (request, response) => {
 })
 
 // === POST Methods ===
+
+// New graph POST method
 app.post("/newGraph", (request, response) => {
 	console.log(request.body)
 	let graphInfo = request.body
@@ -76,7 +78,7 @@ app.post("/newGraph", (request, response) => {
 	let newGraph = new Graph(nextGraphId++, graphInfo.name, graphInfo.username, JSON.parse(graphInfo.eqnStrings))
 	graphs.push(newGraph)
 
-	response.send()
+	response.sendStatus(201)
 })
 
 // Start server

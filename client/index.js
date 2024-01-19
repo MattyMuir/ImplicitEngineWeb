@@ -48,11 +48,20 @@ function PlusButtonPressed(event)
 
 async function SaveButtonPressed(event)
 {
-    // Prepare data for request
+    // == Prepare data for request ==
     let newGraph = {}
-    newGraph.name = "GraphYuh"
+    newGraph.name = graphName
     newGraph.username = "Matty"
-    newGraph.eqnStrings = JSON.stringify(["x=0"])
+
+    // Get equation strings
+    let eqnStringsArr = []
+    let eqnList = document.getElementById("eqnList")
+    for (let child of eqnList.children)
+    {
+        let textInput = child.children[0]
+        eqnStringsArr.push(textInput.value)
+    }
+    newGraph.eqnStrings = JSON.stringify(eqnStringsArr)
 
     // Send POST request
     const response = await fetch("/newGraph", {
