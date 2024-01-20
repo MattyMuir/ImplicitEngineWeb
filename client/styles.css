@@ -1,4 +1,4 @@
-.iconBtn
+.icon
 {
     display: inline-block;
 	width: 20px;
@@ -8,6 +8,11 @@
 .whiteFill
 {
 	fill: white;
+}
+
+.greenFill
+{
+	fill: darkgreen
 }
 
 .navHeight
@@ -24,9 +29,4 @@
 {
 	width: calc(100vw * 10/12);
 	height: calc(100vh - 50px);
-}
-
-.red
-{
-	background-color: red;
 }

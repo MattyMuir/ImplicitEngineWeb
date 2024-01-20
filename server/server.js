@@ -1,5 +1,6 @@
 // Import and initialize express
 const express = require("express")
+const cryptoJS = require("crypto-js")
 const app = express()
 
 // Add all static files in the root directory
@@ -11,18 +12,17 @@ app.use(express.json())
 // === Data Structure ===
 class User
 {
-	constructor(username_, password_)
+	constructor(username_, passwordHash_)
 	{
 		this.username = username_
-		this.password = password_
+		this.passwordHash = passwordHash_
 	}
 }
 
 class Graph
 {
-	constructor(id_, name_, username_, eqnStrings_)
+	constructor(name_, username_, eqnStrings_)
 	{
-		this.id = id_
 		this.name = name_
 		this.username = username_
 		this.eqnStrings = eqnStrings_
@@ -30,13 +30,7 @@ class Graph
 }
 
 let users = []
-let nextGraphId = 0
 let graphs = []
-
-// Test data
-users.push(new User("Matty", "12345"))
-graphs.push(new Graph(nextGraphId, "BasicExample", "Matty", ["y=x", "x^2+y^2=1", "cos(x)+cos(y)=3"]))
-nextGraphId++
 
 // === GET Methods ===
 
@@ -75,10 +69,46 @@ app.post("/newGraph", (request, response) => {
 	console.log(request.body)
 	let graphInfo = request.body
 
-	let newGraph = new Graph(nextGraphId++, graphInfo.name, graphInfo.username, JSON.parse(graphInfo.eqnStrings))
-	graphs.push(newGraph)
+	// Check if graph already exists
+	for (let graph of graphs)
+	{
+		if (graph.name == graphInfo.name && graph.username == graphInfo.username)
+		{
+			console.log("Updated")
+			graph.eqnStrings = JSON.parse(graphInfo.eqnStrings)
+			response.sendStatus(200) // OK
+			return
+		}
+	}
 
-	response.sendStatus(201)
+	console.log("Created")
+	let newGraph = new Graph(graphInfo.name, graphInfo.username, JSON.parse(graphInfo.eqnStrings))
+	graphs.push(newGraph)
+	response.sendStatus(201) // Created
+})
+
+// New user POST method
+app.post("/newUser", (request, response) => {
+	console.log(request.body)
+	let newUserInfo = request.body
+
+	// Check if username is taken
+	for (const user of users)
+	{
+		if (newUserInfo.username == user.username)
+		{
+			// Username already taken
+			console.log("Username taken")
+			response.sendStatus(409) // Conflict
+			return
+		}
+	}
+
+	// Add user
+	users.push(new User(newUserInfo.username, cryptoJS.SHA256(newUserInfo.password)))
+	response.sendStatus(201) // Created
+
+	console.log(users)
 })
 
 // Start server

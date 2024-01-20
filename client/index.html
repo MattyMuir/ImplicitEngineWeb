@@ -31,13 +31,31 @@
 		</symbol>
 	</svg>
 
+	<!-- Person icon image -->
+	<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+		<symbol id="person" viewBox="0 0 16 16">
+			<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+			<path fill-rule="evenodd"
+				d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+		</symbol>
+	</svg>
+
+	<!-- Check icon img -->
+	<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+		<symbol id="check" viewBox="0 0 16 16">
+			<path
+				d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
+		</symbol>
+	</svg>
+
 	<!-- Navbar -->
-	<header class="navbar sticky-top bg-dark navHeight flex-md-nowrap p-0 shadow">
+	<nav class="navbar sticky-top bg-dark navHeight flex-md-nowrap p-0 shadow">
+		<!-- Left aligned content -->
 		<ul class="navbar-nav flex-row">
 			<li class="nav-item text-nowrap">
 				<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
 					aria-controls="offcanvasExample">
-					<svg class="iconBtn whiteFill">
+					<svg class="icon whiteFill">
 						<use xlink:href="#list" />
 					</svg>
 				</button>
@@ -45,16 +63,37 @@
 
 			<!-- Graph name -->
 			<li class="nav-item text-nowrap">
-				<button id="graphNameDisplay" type="button" class="btn bg-transparent text-light" data-bs-toggle="modal" data-bs-target="#renameModal" onclick="RenameModalOpened()">
+				<button id="graphNameDisplay" type="button" class="btn bg-transparent text-light" data-bs-toggle="modal"
+					data-bs-target="#renameModal" onclick="RenameModalOpened()">
 					Unnamed Graph
 				</button>
 			</li>
 
+			<!-- Save button -->
 			<li class="nav-item text-nowrap px-2">
-				<button id="saveBtn" class="btn btn-success" type="button">Save</button>
+				<button id="saveBtn" class="btn btn-outline-secondary" type="button" disabled>Save</button>
+			</li>
+
+			<!-- Save checkmark -->
+			<li class="nav-item text-nowrap d-flex align-items-center">
+				<svg id="saveCheck" class="icon greenFill d-none">
+					<use xlink:href="#check"/>
+				</svg>
 			</li>
 		</ul>
-	</header>
+
+		<!-- Right aligned content -->
+		<ul class="navbar-nav ms-auto">
+			<li class="nav-item pe-3">
+				<button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+				data-bs-target="#loginModal">
+					<svg class="icon whiteFill">
+						<use xlink:href="#person" />
+					</svg>
+				</button>
+			</li>
+		</ul>
+	</nav>
 
 	<!-- Collapsible Sidebar -->
 	<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -80,7 +119,7 @@
 
 				<!-- Plus Button -->
 				<button class="btn bg-light" id="plusBtn">
-					<svg class="iconBtn">
+					<svg class="icon">
 						<use xlink:href="#plus" />
 					</svg>
 				</button>
@@ -105,7 +144,31 @@
 					<input id="renameInput" type="text" class="form-control" value="Unnamed Graph">
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="OnEquationRenamed()">Save changes</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+						onclick="OnEquationRenamed()">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Login Modal -->
+	<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="loginModalLabel">Login</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<label for="usernameInput" class="form-label">Username</label>
+					<input id="usernameInput" type="text" class="form-control" value="">
+					<label for="passwordInput" class="form-label">Password</label>
+					<input id="passwordInput" type="password" class="form-control" value="">
+				</div>
+				<div class="modal-footer">
+					<p id="loginResult" class="d-none">Username Taken</p>
+					<button type="button" class="btn btn-primary">Login</button>
+					<button type="button" class="btn btn-secondary" onclick="CreateAccountPressed()">Create Account</button>
 				</div>
 			</div>
 		</div>
