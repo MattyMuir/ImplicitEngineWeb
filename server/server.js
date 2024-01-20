@@ -62,6 +62,30 @@ app.get("/graph", (request, response) => {
 	response.sendStatus(404)
 })
 
+// Login GET method
+app.get("/login", (request, response) => {
+	let username = request.query.username
+	let password = request.query.password
+
+	console.log(users)
+
+	for (const user of users)
+	{
+		if (user.username == username)
+		{
+			// User found
+			if (cryptoJS.SHA256(password).toString() == user.passwordHash.toString())
+				response.sendStatus(200) // OK
+			else
+				response.sendStatus(401) // Unauthorized
+			return
+		}
+	}
+
+	// User not found
+	response.sendStatus(404) // Not found
+})
+
 // === POST Methods ===
 
 // New graph POST method
@@ -107,8 +131,6 @@ app.post("/newUser", (request, response) => {
 	// Add user
 	users.push(new User(newUserInfo.username, cryptoJS.SHA256(newUserInfo.password)))
 	response.sendStatus(201) // Created
-
-	console.log(users)
 })
 
 // Start server

@@ -73,7 +73,7 @@ async function SaveButtonPressed(event)
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newGraph),
-    });
+    })
 
     if (response.status == 201 || response.status == 200)
     {
@@ -101,9 +101,34 @@ function OnEquationRenamed()
     graphNameDisplay.innerHTML = graphName
 }
 
-function LoginPressed()
+async function LoginPressed()
 {
+    let usernameInput = document.getElementById("usernameInput")
+    let passwordInput = document.getElementById("passwordInput")
 
+    // Send request
+    const response = await fetch(`/login?username=${usernameInput.value}&password=${passwordInput.value}`)
+
+    let loginResult = document.getElementById("loginResult")
+    loginResult.classList.remove("d-none")
+
+    if (response.status == 200)
+    {
+        loginResult.innerHTML = "Login successful"
+        SuccessfulLogin(loginInfo.username)
+    }
+    else if (response.status == 401)
+        loginResult.innerHTML = "Incorrect password"
+    else if (response.status == 404)
+        loginResult.innerHTML = "Username not found"
+    else
+        loginResult.innerHTML = "Error occurred"
+
+    // Disable login result after 3 seconds
+    setTimeout(() => {
+        let loginResult = document.getElementById("loginResult")
+        loginResult.classList.add("d-none")
+    }, 3000)
 }
 
 async function CreateAccountPressed()
@@ -121,9 +146,7 @@ async function CreateAccountPressed()
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newUserInfo),
-    });
-
-    console.log(response.status)
+    })
 
     let loginResult = document.getElementById("loginResult")
     loginResult.classList.remove("d-none")
@@ -134,13 +157,9 @@ async function CreateAccountPressed()
         SuccessfulLogin(newUserInfo.username)
     }
     else if (response.status == 409)
-    {
-        loginResult.innerHTML = "Username Taken"
-    }
+        loginResult.innerHTML = "Username taken"
     else
-    {
-        loginResult.innerHTML = "Error Occurred"
-    }
+        loginResult.innerHTML = "Error occurred"
 
     // Disable login result after 3 seconds
     setTimeout(() => {
@@ -164,7 +183,7 @@ function OnResize(event)
 {
     Refresh()
 }
-window.onresize = OnResize;
+window.onresize = OnResize
 
 // === Other Functions ===
 function OnDraw()
