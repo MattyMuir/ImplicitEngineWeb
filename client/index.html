@@ -54,7 +54,7 @@
 		<ul class="navbar-nav flex-row">
 			<li class="nav-item text-nowrap">
 				<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
-					aria-controls="offcanvasExample">
+					aria-controls="offcanvasExample" onclick="SidebarOpened()">
 					<svg class="icon whiteFill">
 						<use xlink:href="#list" />
 					</svg>
@@ -77,16 +77,16 @@
 			<!-- Save checkmark -->
 			<li class="nav-item text-nowrap d-flex align-items-center">
 				<svg id="saveCheck" class="icon greenFill d-none">
-					<use xlink:href="#check"/>
+					<use xlink:href="#check" />
 				</svg>
 			</li>
 		</ul>
 
 		<!-- Right aligned content -->
-		<ul class="navbar-nav ms-auto">
+		<ul class="navbar-nav flex-row">
+			<li id="usernameDisplay" class="nav-item text-light d-flex align-items-center px-2"></li>
 			<li class="nav-item pe-3">
-				<button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-				data-bs-target="#loginModal">
+				<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loginModal">
 					<svg class="icon whiteFill">
 						<use xlink:href="#person" />
 					</svg>
@@ -98,11 +98,28 @@
 	<!-- Collapsible Sidebar -->
 	<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
 		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+			<h5 class="offcanvas-title" id="offcanvasExampleLabel">Saved Equations</h5>
 			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body">
-			<p>Hello</p>
+			<div class="container p-0">
+				<div id="sidebarGraphList" class="row row-cols-1">
+					<div class="col p-0">
+						<button type="button" class="btn col-12 btn-light rounded-0 text-start">
+							Column
+						</button>
+					</div>
+					<div class="col p-0">
+						<button type="button" class="btn col-12 btn-light rounded-0 text-start">Column</button>
+					</div>
+					<div class="col p-0">
+						<button type="button" class="btn col-12 btn-light rounded-0 text-start">Column</button>
+					</div>
+					<div class="col p-0">
+						<button type="button" class="btn col-12 btn-light rounded-0 text-start">Column</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -145,7 +162,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-						onclick="OnEquationRenamed()">Save changes</button>
+						onclick="OnEquationRenamed()">Rename</button>
 				</div>
 			</div>
 		</div>
@@ -168,7 +185,8 @@
 				<div class="modal-footer">
 					<p id="loginResult" class="d-none">Username Taken</p>
 					<button type="button" class="btn btn-primary" onclick="LoginPressed()">Login</button>
-					<button type="button" class="btn btn-secondary" onclick="CreateAccountPressed()">Create Account</button>
+					<button type="button" class="btn btn-secondary" onclick="CreateAccountPressed()">Create
+						Account</button>
 				</div>
 			</div>
 		</div>

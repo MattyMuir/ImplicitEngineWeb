@@ -177,6 +177,32 @@ function SuccessfulLogin(username_)
     saveBtn.classList.remove("btn-outline-secondary")
     saveBtn.classList.add("btn-success")
     saveBtn.disabled = false
+
+    let usernameDisplay = document.getElementById("usernameDisplay")
+    usernameDisplay.innerHTML = username
+}
+
+async function SidebarOpened()
+{
+    // Clear graph list
+    let graphList = document.getElementById("sidebarGraphList")
+    graphList.innerHTML = ""
+
+    // Exit here if not logged in
+    if (!isLoggedIn) return
+
+    // GET graphs for current user
+    const response = await fetch(`/listGraphs?username=${username}`)
+    let userGraphs = await response.json()
+
+    for (const graph of userGraphs)
+    {
+        let newElement = document.createElement("div")
+        newElement.classList.add("col")
+        newElement.classList.add("p-0")
+        newElement.innerHTML = `<button type="button" class="btn col-12 btn-light rounded-0 text-start">${graph.name}</button>`
+        graphList.appendChild(newElement)
+    }
 }
 
 function OnResize(event)
