@@ -38,11 +38,19 @@ let graphs = []
 
 // List graph GET method
 app.get("/listGraphs", (request, response) => {
+	let username = request.query.username
+
 	// Prepare return object
 	let result = []
 
+	// Make sure user exists
+	let userExists = false
+	for (const user of users)
+		if (user.username == username)
+			userExists = true
+	if (!userExists) response.sendStatus(404)
+
 	// Find all graphs belonging to this user
-	let username = request.query.username
 	for (const graph of graphs)
 	{
 		if (graph.username == username) result.push(graph)
@@ -53,11 +61,12 @@ app.get("/listGraphs", (request, response) => {
 
 // Individual graph GET method
 app.get("/graph", (request, response) => {
-	// Find the graph with the correct name
+	// Find the graph with the correct name belonging to this user
 	let name = request.query.name
+	let username = request.query.username
 	for (const graph of graphs)
 	{
-		if (graph.name == name)
+		if (graph.name == name && graph.username == username)
 		{
 			response.send(graph)
 			return
@@ -118,6 +127,13 @@ app.get("/user", (request, response) => {
 // New graph POST method
 app.post("/newGraph", (request, response) => {
 	let graphInfo = request.body
+
+	// Make sure user exists
+	let userExists = false
+	for (const user of users)
+		if (user.username == graphInfo.username)
+			userExists = true
+	if (!userExists) response.sendStatus(404)
 
 	// Check if graph already exists
 	for (let graph of graphs)

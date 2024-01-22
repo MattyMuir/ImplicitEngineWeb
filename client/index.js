@@ -204,8 +204,11 @@ async function GraphLoaded(event)
     let btn = event.target
     let graphName = btn.innerText
 
+    // Shouldn't be possible but best to check
+    if (!isLoggedIn) return
+
     // Request graph info from server
-    const response = await fetch(`/graph?name=${graphName}`)
+    const response = await fetch(`/graph?name=${graphName}&username=${username}`)
     const graph = await response.json()
 
     // Load graph into app
