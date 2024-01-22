@@ -70,6 +70,23 @@ function DrawAxes(ctx, bounds)
 {
     DrawLine(new Point(0, bounds.yMin), new Point(0, bounds.yMax), ctx, bounds)
     DrawLine(new Point(bounds.xMin, 0), new Point(bounds.xMax, 0), ctx, bounds)
+
+    ctx.font = "18px Calibri";
+
+    // Axes markers
+    // X Axis
+    for (let x = Math.ceil(bounds.xMin); x <= Math.floor(bounds.xMax); x++)
+    {
+        let point = ToScreen(new Point(x, 0), bounds)
+        ctx.fillText(`${x}`, point.x, point.y)
+    }
+    
+    // Y Axis
+    for (let y = Math.ceil(bounds.yMin); y <= Math.floor(bounds.yMax); y++)
+    {
+        let point = ToScreen(new Point(0, y), bounds)
+        ctx.fillText(`${y}`, point.x, point.y)
+    }
 }
 
 function GetCaseIndex(fs)
