@@ -66,6 +66,12 @@ function DrawLine(p0, p1, ctx, bounds)
     ctx.lineTo(p1Screen.x, p1Screen.y)
 }
 
+function DrawAxes(ctx, bounds)
+{
+    DrawLine(new Point(0, bounds.yMin), new Point(0, bounds.yMax), ctx, bounds)
+    DrawLine(new Point(bounds.xMin, 0), new Point(bounds.xMax, 0), ctx, bounds)
+}
+
 function GetCaseIndex(fs)
 {
     let lutIdx = 0

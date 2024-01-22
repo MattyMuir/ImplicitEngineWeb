@@ -31,7 +31,13 @@ function Refresh()
     OnDraw()
 }
 
-function PlusButtonPressed(event)
+function ClearEquations()
+{
+    let eqnList = document.getElementById("eqnList")
+    eqnList.innerHTML = ""
+}
+
+function AddEquation(str)
 {
     let eqnList = document.getElementById("eqnList")
 
@@ -39,13 +45,19 @@ function PlusButtonPressed(event)
     let newInput = document.createElement("li")
     newInput.classList.add("list-group-item")
     newInput.classList.add("p-1")
-    newInput.innerHTML = "<input type=\"text\" class=\"form-control\">"
-
-    // Add new item to eqnList
-    eqnList.appendChild(newInput)
+    newInput.innerHTML = `<input type="text" class="form-control">`
+    newInput.children[0].value = str
 
     // Add event listener
     newInput.children[0].addEventListener("input", OnTextChanged)
+
+    // Add new item to eqnList
+    eqnList.appendChild(newInput)
+}
+
+function PlusButtonPressed(event)
+{
+    AddEquation("")
 }
 
 async function SaveButtonPressed(event)
@@ -93,12 +105,17 @@ function RenameModalOpened()
     renameInput.value = graphName
 }
 
-function OnEquationRenamed()
+function ChangeGraphName(newName)
+{
+    let graphNameDisplay = document.getElementById("graphNameDisplay")
+    graphName = newName
+    graphNameDisplay.innerHTML = graphName
+}
+
+function OnGraphRenamed()
 {
     let renameInput = document.getElementById("renameInput")
-    let graphNameDisplay = document.getElementById("graphNameDisplay")
-    graphName = renameInput.value
-    graphNameDisplay.innerHTML = graphName
+    ChangeGraphName(renameInput.value)
 }
 
 async function LoginPressed()
@@ -182,25 +199,48 @@ function SuccessfulLogin(username_)
     usernameDisplay.innerHTML = username
 }
 
+async function GraphLoaded(event)
+{
+    let btn = event.target
+    let graphName = btn.innerText
+
+    // Request graph info from server
+    const response = await fetch(`/graph?name=${graphName}`)
+    const graph = await response.json()
+
+    // Load graph into app
+    ChangeGraphName(graphName)
+
+    ClearEquations()
+    for (const equation of graph.eqnStrings)
+        AddEquation(equation)
+
+    Refresh()
+}
+
 async function SidebarOpened()
 {
-    // Clear graph list
+    // Clear graph list and add loading icon
     let graphList = document.getElementById("sidebarGraphList")
-    graphList.innerHTML = ""
+    graphList.innerHTML = `<div class="col text-center"><div class="spinner-border" role="status"></div></div>`
 
     // Exit here if not logged in
     if (!isLoggedIn) return
 
     // GET graphs for current user
     const response = await fetch(`/listGraphs?username=${username}`)
-    let userGraphs = await response.json()
+    const userGraphs = await response.json()
 
+    // Add graphs to list
+    graphList.innerHTML = ""
     for (const graph of userGraphs)
     {
         let newElement = document.createElement("div")
         newElement.classList.add("col")
         newElement.classList.add("p-0")
+        newElement.classList.add("border")
         newElement.innerHTML = `<button type="button" class="btn col-12 btn-light rounded-0 text-start">${graph.name}</button>`
+        newElement.children[0].addEventListener("click", GraphLoaded)
         graphList.appendChild(newElement)
     }
 }
@@ -214,6 +254,9 @@ window.onresize = OnResize
 // === Other Functions ===
 function OnDraw()
 {
+    // Draw axes
+    DrawAxes(ctx, bounds)
+
     let eqnList = document.getElementById("eqnList")
     for (let child of eqnList.children)
     {

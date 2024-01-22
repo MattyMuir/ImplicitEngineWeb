@@ -51,11 +51,15 @@ app.get("/listGraphs", (request, response) => {
 
 // Individual graph GET method
 app.get("/graph", (request, response) => {
-	// Find all graphs belonging to this user
-	let id = request.query.id
+	// Find the graph with the correct name
+	let name = request.query.name
 	for (const graph of graphs)
 	{
-		if (graph.id == id) response.send(graph)
+		if (graph.name == name)
+		{
+			response.send(graph)
+			return
+		}
 	}
 
 	// Graph not found
@@ -66,8 +70,6 @@ app.get("/graph", (request, response) => {
 app.get("/login", (request, response) => {
 	let username = request.query.username
 	let password = request.query.password
-
-	console.log(users)
 
 	for (const user of users)
 	{
@@ -90,7 +92,6 @@ app.get("/login", (request, response) => {
 
 // New graph POST method
 app.post("/newGraph", (request, response) => {
-	console.log(request.body)
 	let graphInfo = request.body
 
 	// Check if graph already exists
@@ -98,14 +99,12 @@ app.post("/newGraph", (request, response) => {
 	{
 		if (graph.name == graphInfo.name && graph.username == graphInfo.username)
 		{
-			console.log("Updated")
 			graph.eqnStrings = JSON.parse(graphInfo.eqnStrings)
 			response.sendStatus(200) // OK
 			return
 		}
 	}
 
-	console.log("Created")
 	let newGraph = new Graph(graphInfo.name, graphInfo.username, JSON.parse(graphInfo.eqnStrings))
 	graphs.push(newGraph)
 	response.sendStatus(201) // Created
@@ -113,7 +112,6 @@ app.post("/newGraph", (request, response) => {
 
 // New user POST method
 app.post("/newUser", (request, response) => {
-	console.log(request.body)
 	let newUserInfo = request.body
 
 	// Check if username is taken
@@ -122,7 +120,6 @@ app.post("/newUser", (request, response) => {
 		if (newUserInfo.username == user.username)
 		{
 			// Username already taken
-			console.log("Username taken")
 			response.sendStatus(409) // Conflict
 			return
 		}
