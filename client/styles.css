@@ -25,8 +25,40 @@
 	height: calc(100vh - 50px);
 }
 
-#mainCanvas
+
+
+
+
+@media (width >= 567px)
 {
-	width: calc(100vw * 10/12);
-	height: calc(100vh - 50px);
+	#eqnList
+	{
+		width: 200px;
+	}
+
+	#mainCanvas
+	{
+		width: calc(100vw - 210px);
+		height: calc(100vh - 50px);
+	}
+}
+
+@media (width < 576px)
+{
+	#mainContainer
+	{
+		flex-direction: column-reverse;
+	}
+	
+	#eqnList
+	{
+		width: 100vw;
+		height: 200px;
+	}
+
+	#mainCanvas
+	{
+		width: 100vw;
+		height: calc(100vh - 250px);
+	}
 }

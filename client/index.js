@@ -52,7 +52,7 @@ function AddEquation(str)
     newInput.children[0].addEventListener("input", OnTextChanged)
 
     // Add new item to eqnList
-    eqnList.appendChild(newInput)
+    eqnList.insertBefore(newInput, eqnList.children[eqnList.children.length - 1]);
 }
 
 function PlusButtonPressed(event)
@@ -267,6 +267,7 @@ function OnDraw()
     for (let child of eqnList.children)
     {
         let textInput = child.children[0]
+        if (textInput.id == "plusBtn") continue
         try
         {
             RenderEquation(ctx, textInput.value, bounds)
@@ -286,6 +287,7 @@ function AddTextListeners()
     for (let child of eqnList.children)
     {
         let textInput = child.children[0]
+        if (textInput.id == "plusBtn") continue
         textInput.addEventListener("input", OnTextChanged)
     }
 }

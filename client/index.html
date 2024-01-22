@@ -111,29 +111,30 @@
 		</div>
 	</div>
 
-	<!-- Grid Layout -->
-	<div class="container-fluid">
-		<div class="row bodyHeight">
-			<!-- Equation List -->
-			<div class="col-2 p-0 border bodyHeight text-center">
-				<ul class="list-group" id="eqnList">
-					<li class="list-group-item p-1">
-						<input type="text" class="form-control">
-					</li>
-				</ul>
+	<!-- Main Container -->
+	<div id="mainContainer" class="d-flex bodyHeight">
+		<!-- Equation List -->
+		<div class="p-0 border text-center">
+			<ul class="list-group" id="eqnList">
+				<li class="list-group-item p-1">
+					<input type="text" class="form-control">
+				</li>
+				<li>
+					<!-- Plus Button -->
+					<button id="plusBtn" class="btn bg-light">
+						<svg class="icon">
+							<use xlink:href="#plus" />
+						</svg>
+					</button>
+				</li>
+			</ul>
 
-				<!-- Plus Button -->
-				<button class="btn bg-light" id="plusBtn">
-					<svg class="icon">
-						<use xlink:href="#plus" />
-					</svg>
-				</button>
-			</div>
+			
+		</div>
 
-			<!-- Canvas -->
-			<div class="col-10 p-0 bodyHeight" id="canvasDiv">
-				<canvas class="p-0" id="mainCanvas"></canvas>
-			</div>
+		<!-- Canvas -->
+		<div class="p-0" id="canvasDiv">
+			<canvas class="p-0" id="mainCanvas"></canvas>
 		</div>
 	</div>
 
