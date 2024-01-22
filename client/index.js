@@ -220,12 +220,15 @@ async function GraphLoaded(event)
 
 async function SidebarOpened()
 {
-    // Clear graph list and add loading icon
+    // Clear graph list 
     let graphList = document.getElementById("sidebarGraphList")
-    graphList.innerHTML = `<div class="col text-center"><div class="spinner-border" role="status"></div></div>`
+    graphList.innerHTML = ""
 
     // Exit here if not logged in
     if (!isLoggedIn) return
+
+    // Add loading icon
+    graphList.innerHTML = `<div class="col text-center"><div class="spinner-border" role="status"></div></div>`
 
     // GET graphs for current user
     const response = await fetch(`/listGraphs?username=${username}`)
