@@ -1,7 +1,9 @@
 # API Documentation
 ## GET Methods
-- [/listGraphs](/listGraphs.md)
-- [/graph](/graph.md)
-- [/login](/login.md)
+- [`/listGraphs`](listGraphs.md)
+- [`/graph`](graph.md)
+- [`/login`](login.md)
+- [`/listUsers`](listUsers.md)
+- [`/user`](user.md)
 
 ## POST Methods
