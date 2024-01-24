@@ -7,3 +7,5 @@
 - [`/user`](user.md)
 
 ## POST Methods
+- [`/newGraph`](newGraph.md)
+- [`/newUser`](newUser.md)
