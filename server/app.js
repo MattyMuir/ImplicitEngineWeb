@@ -48,7 +48,11 @@ app.get("/listGraphs", (request, response) => {
 	for (const user of users)
 		if (user.username == username)
 			userExists = true
-	if (!userExists) response.sendStatus(404)
+	if (!userExists)
+	{
+		response.sendStatus(404)
+		return
+	}
 
 	// Find all graphs belonging to this user
 	for (const graph of graphs)
@@ -133,7 +137,11 @@ app.post("/newGraph", (request, response) => {
 	for (const user of users)
 		if (user.username == graphInfo.username)
 			userExists = true
-	if (!userExists) response.sendStatus(404)
+	if (!userExists)
+	{
+		response.sendStatus(404)
+		return
+	}
 
 	// Check if graph already exists
 	for (let graph of graphs)

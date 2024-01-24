@@ -8,6 +8,51 @@ let isLoggedIn = false
 let username = ""
 
 // === Event Handlers ===
+function ShowServerDownToast()
+{
+    const serverDownToast = document.getElementById("serverDown")
+    const serverDownToastInstance = bootstrap.Toast.getOrCreateInstance(serverDownToast)
+    serverDownToastInstance.show()
+}
+
+async function MyFetch(url, isPost, returnsJson, body_)
+{
+    // Setup fetch options
+    let options = {
+        method: isPost ? "POST" : "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        }
+    }
+    if (isPost) options.body = JSON.stringify(body_)
+
+    // Make fetch request repeatedly
+    let unsuccessful = true
+    while (unsuccessful)
+    {
+        unsuccessful = false
+        try
+        {
+            const response = await fetch(url, options)
+
+            // Extract info from response
+            var status = response.status
+            var body = {}
+            if (returnsJson) body = await response.json()
+        }
+        catch (exception)
+        {
+            // Server is down
+            unsuccessful = true
+
+            ShowServerDownToast()
+        }
+    }
+    
+    return { status: status, body: body }
+}
+
 function UpdateDimensions()
 {
     let canvasDiv = document.getElementById("canvasDiv")
@@ -34,7 +79,8 @@ function Refresh()
 function ClearEquations()
 {
     let eqnList = document.getElementById("eqnList")
-    eqnList.innerHTML = ""
+    while (eqnList.children.length > 1)
+        eqnList.removeChild(eqnList.children[0])
 }
 
 function AddEquation(str)
@@ -73,19 +119,13 @@ async function SaveButtonPressed(event)
     for (let child of eqnList.children)
     {
         let textInput = child.children[0]
+        if (textInput.id == "plusBtn") continue
         eqnStringsArr.push(textInput.value)
     }
     newGraph.eqnStrings = JSON.stringify(eqnStringsArr)
 
     // Send POST request
-    const response = await fetch("/newGraph", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newGraph),
-    })
+    const response = await MyFetch("/newGraph", true, false, newGraph)
 
     if (response.status == 201 || response.status == 200)
     {
@@ -124,7 +164,7 @@ async function LoginPressed()
     let passwordInput = document.getElementById("passwordInput")
 
     // Send request
-    const response = await fetch(`/login?username=${usernameInput.value}&password=${passwordInput.value}`)
+    const response = await MyFetch(`/login?username=${usernameInput.value}&password=${passwordInput.value}`, false, false, {})
 
     let loginResult = document.getElementById("loginResult")
     loginResult.classList.remove("d-none")
@@ -156,14 +196,7 @@ async function CreateAccountPressed()
     let newUserInfo = { username: usernameInput.value, password: passwordInput.value }
 
     // Send request
-    const response = await fetch("/newUser", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUserInfo),
-    })
+    const response = await MyFetch("/newUser", true, false, newUserInfo)
 
     let loginResult = document.getElementById("loginResult")
     loginResult.classList.remove("d-none")
@@ -208,8 +241,8 @@ async function GraphLoaded(event)
     if (!isLoggedIn) return
 
     // Request graph info from server
-    const response = await fetch(`/graph?name=${graphName}&username=${username}`)
-    const graph = await response.json()
+    const response = await MyFetch(`/graph?name=${graphName}&username=${username}`, false, true, {})
+    const graph = response.body
 
     // Load graph into app
     ChangeGraphName(graphName)
@@ -234,8 +267,8 @@ async function SidebarOpened()
     graphList.innerHTML = `<div class="col text-center"><div class="spinner-border" role="status"></div></div>`
 
     // GET graphs for current user
-    const response = await fetch(`/listGraphs?username=${username}`)
-    const userGraphs = await response.json()
+    const response = await MyFetch(`/listGraphs?username=${username}`, false, true, {})
+    const userGraphs = response.body
 
     // Add graphs to list
     graphList.innerHTML = ""
